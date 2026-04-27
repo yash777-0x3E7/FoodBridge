@@ -1,219 +1,97 @@
-# 🌉 FoodBridge
+# 🍎 FoodBridge — Real-Time Surplus Food Rescue
 
-> **Real-time surplus food rescue for NGOs and people in need.**
-> Connects hotels, restaurants, caterers and function halls (donors) with
-> orphanages, NGOs, shelters and individuals (receivers), so surplus food gets
-> rescued before it goes to waste.
+[![Vercel Deployment](https://img.shields.io/badge/Vercel-Deployed-success?logo=vercel&style=for-the-badge)](https://foodbridge-app.vercel.app)
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![Firebase](https://img.shields.io/badge/firebase-%23039BE5.svg?style=for-the-badge&logo=firebase)](https://firebase.google.com/)
+[![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
- MVP built with **TanStack Start + Tailwind v4 + Firebase**.
-
----
-
-## ✨ Features
-
-- 🔐 Email/password auth with role selection (donor / receiver)
-- 🍱 Donors create food listings (title, type, quantity, serves, pickup address, time, expiry, free or low-cost)
-- ⚡ Receivers see all available listings in **real time** (Firestore `onSnapshot`)
-- 🤝 One-tap **Claim food** flow — claimed listings disappear from other receivers' lists instantly
-- 📍 **Open in Google Maps** button on every listing
-- ⏰ Urgency badges — "Urgent pickup" if expiry < 2 hours, "Expired" auto-hidden from available list
-- 📊 Donor dashboard with Active / Claimed tabs and rescue stats
-- 📜 "My claims" page for receivers with donor contact + pickup info
-- 📱 Clean, responsive Tailwind UI with the **Fresh Harvest** palette (green + warm orange on cream)
+**FoodBridge** connects hotels, restaurants, and event venues with NGOs, shelters, and individuals in need. Our mission is to ensure that surplus food reaches people before it goes to waste, in real-time.
 
 ---
 
-## 🧱 Tech stack
+## ✨ Key Features
 
-| Layer            | Tech                                              |
-|------------------|---------------------------------------------------|
-| Frontend         | React 19 + Vite 7 + TypeScript                    |
-| Routing          | TanStack Router (file-based)                      |
-| Styling          | Tailwind CSS v4 (oklch design tokens)             |
-| Auth             | Firebase Authentication (Email/Password)          |
-| Database         | Cloud Firestore (real-time)                       |
-| Maps             | Google Maps deep links (no API key needed)        |
-| Hosting          | Firebase Hosting (or any static host)             |
+### 🏢 For Donors (Hotels, Restaurants, Caterers)
+- **Batch Donations**: Publish multiple food items (e.g., Rice, Curry, Dessert) in a single, streamlined form.
+- **Real-Time Tracking**: See exactly when your food is claimed and by whom.
+- **Simple Management**: Monitor active listings and track your total impact (people served).
 
----
-
-## 🚀 Run locally
-
-### 1. Clone & install
-
-```bash
-git clone <your-repo-url> foodbridge
-cd foodbridge
-bun install        # or: npm install / pnpm install
-```
-
-### 2. Create a Firebase project
-
-1. Go to https://console.firebase.google.com → **Add project**
-2. **Build → Authentication → Get started → Sign-in method → Email/Password → Enable**
-3. **Build → Firestore Database → Create database** (start in *production* mode, pick a region)
-4. **Project settings (⚙️) → General → Your apps → Add app → Web (`</>`)** — register an app and copy the config object
-
-### 3. Add your Firebase config
-
-Copy the example env file and paste your Firebase web-app keys:
-
-```bash
-cp .env.example .env
-```
-
-Edit `.env`:
-
-```env
-VITE_FIREBASE_API_KEY=AIza...
-VITE_FIREBASE_AUTH_DOMAIN=foodbridge-xxxx.firebaseapp.com
-VITE_FIREBASE_PROJECT_ID=foodbridge-xxxx
-VITE_FIREBASE_STORAGE_BUCKET=foodbridge-xxxx.appspot.com
-VITE_FIREBASE_MESSAGING_SENDER_ID=1234567890
-VITE_FIREBASE_APP_ID=1:123:web:abc
-```
-
-> All vars **must** be prefixed `VITE_` so Vite exposes them to the browser.
-
-### 4. Deploy Firestore security rules
-
-The repo includes `firestore.rules`. Apply them via Firebase CLI:
-
-```bash
-npm install -g firebase-tools
-firebase login
-firebase init firestore        # select your project, accept default rules file path
-firebase deploy --only firestore:rules
-```
-
-Or paste the contents of `firestore.rules` directly into the Firebase console
-(**Firestore Database → Rules** tab).
-
-### 5. Run
-
-```bash
-bun run dev        # or: npm run dev
-```
-
-Open http://localhost:3000 (port may differ — check terminal).
+### 🤝 For Receivers (NGOs, Shelters, Volunteers)
+- **Live Feed**: Browse available food nearby with real-time updates.
+- **Instant Claiming**: Claim food with one click and get instant donor contact details.
+- **Smart Filtering**: Sort by expiry time or distance to prioritize the most urgent rescues.
 
 ---
 
-## 📦 Build & deploy to Firebase Hosting
+## 🛠️ Tech Stack
 
-This project is **TanStack Start (SSR)**. For Firebase Hosting (static), the
-client build under `dist/client` is what you want to serve. The simplest path:
-
-```bash
-bun run build
-firebase init hosting          # public directory: dist/client, single-page app: Yes
-firebase deploy --only hosting
-```
-
-For full SSR you'd deploy the `dist/server` worker bundle to Cloudflare Workers
-or another edge host — out of scope for this MVP.
+- **Frontend**: [React](https://reactjs.org/) with [TanStack Router](https://tanstack.com/router) for lightning-fast SPA navigation.
+- **Backend/Database**: [Firebase Firestore](https://firebase.google.com/docs/firestore) for real-time data synchronization.
+- **Authentication**: [Firebase Auth](https://firebase.google.com/docs/auth) with secure role-based access control.
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) with a custom professional design system.
+- **Deployment**: [Vercel](https://vercel.com/) for high-performance global delivery.
 
 ---
 
-## 🗂 Firestore data model
+## 🚀 Getting Started
 
-### Collection: `users/{uid}`
+### Prerequisites
+- Node.js (v18 or higher)
+- npm or bun
 
-```ts
-{
-  uid: string,
-  name: string,
-  email: string,
-  phone: string,
-  role: "donor" | "receiver",
-  organizationName: string,
-  organizationType: "hotel" | "restaurant" | "caterer" | "function_hall"
-                  | "orphanage" | "ngo" | "shelter" | "individual" | "other",
-  createdAt: number   // epoch ms
-}
-```
+### Local Installation
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/yash777-0x3E7/FoodBridge.git
+   cd food-connect-hub
+   ```
 
-### Collection: `foodListings/{id}`
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-```ts
-{
-  donorId: string,
-  donorName: string,
-  donorEmail: string,
-  donorPhone: string,
-  foodTitle: string,
-  foodType: string,
-  description: string,
-  quantity: string,            // "8 kg / 4 trays"
-  servesCount: number,
-  pickupAddress: string,
-  contactPhone: string,
-  priceType: "free" | "low_cost",
-  price: number,               // 0 when free
-  pickupTime: number,          // epoch ms
-  expiresAt: number,           // epoch ms
-  notes: string,
-  status: "available" | "claimed",
-  claimedBy: string | null,
-  claimedByName: string | null,
-  claimedByPhone: string | null,
-  claimedAt: number | null,
-  createdAt: number
-}
-```
+3. **Configure Environment Variables**:
+   Create a `.env` file in the root and add your Firebase credentials:
+   ```env
+   VITE_FIREBASE_API_KEY=your_key
+   VITE_FIREBASE_AUTH_DOMAIN=your_domain
+   VITE_FIREBASE_PROJECT_ID=your_project_id
+   VITE_FIREBASE_STORAGE_BUCKET=your_bucket
+   VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+   VITE_FIREBASE_APP_ID=your_app_id
+   ```
 
-### Required Firestore indexes
-
-The receiver dashboard, donor dashboard, and "My claims" page use composite
-queries. Firestore will print the exact "Create index" link in the browser
-console the first time each query runs — click it once and it's done. The
-queries are:
-
-- `foodListings where status == "available" orderBy createdAt desc`
-- `foodListings where donorId == <uid> orderBy createdAt desc`
-- `foodListings where claimedBy == <uid> orderBy claimedAt desc`
+4. **Run the development server**:
+   ```bash
+   npm run dev
+   ```
 
 ---
 
-## 🛡 Security rules summary (`firestore.rules`)
+## 🌎 Deployment
 
-- ✅ Each user reads/writes only their own `/users/{uid}` profile
-- ✅ Authenticated users can **read** all food listings
-- ✅ Only **donors** can **create** a listing, and only with their own `donorId`
-- ✅ Listing **owner (donor)** can update their own listing freely
-- ✅ A **receiver** can update a listing **only** to claim it (status flips
-     `available → claimed`, immutable fields stay unchanged)
-- ✅ Only the donor who created a listing can delete it
+The app is optimized for **Vercel**. 
 
-See `firestore.rules` for the full ruleset.
+- **Build Command**: `npm run build`
+- **Output Directory**: `dist`
+- **SPA Support**: Configured via `vercel.json` to handle client-side routing.
 
 ---
 
-## 🗺 Routes
+## 📄 License
 
-| Path                  | Page                                        |
-|-----------------------|---------------------------------------------|
-| `/`                   | Landing page                                |
-| `/signup`             | Signup with role selection                  |
-| `/login`              | Login                                       |
-| `/dashboard`          | Redirects to donor or receiver dashboard    |
-| `/donor`              | Donor dashboard (active + claimed tabs)     |
-| `/donor/create`       | Create new food listing                     |
-| `/receiver`           | Real-time available listings + claim flow   |
-| `/receiver/claimed`   | Receiver's claimed food + donor contact     |
+Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 
-## 🧭 MVP simplifications (intentional)
+## 📬 Contact
 
-- No separate backend — Firebase only
-- No advanced verification, no payments, no volunteer delivery, no admin panel
-- No distance-based matching (any receiver sees all available listings)
-- No image uploads (can be added with Firebase Storage if time remains)
-- Map is a **deep link** to Google Maps, not an embedded map UI
+**Yashas R S** - [GitHub](https://github.com/yash777-0x3E7)
+
+Project Link: [https://github.com/yash777-0x3E7/FoodBridge](https://github.com/yash777-0x3E7/FoodBridge)
 
 ---
-
-## 📝 License
-
-MIT — built as a demo / hackathon-style MVP.
+<p align="center">
+  <i>Reduce food waste, feed more people. Together with FoodBridge.</i>
+</p>
