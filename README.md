@@ -87,7 +87,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## 📬 Contact
 
-**Yashas R S** - [GitHub](https://github.com/yash777-0x3E7)
+**Yashas R S** - [Email](yashasrs999@gmail.com)
 
 Project Link: [https://github.com/yash777-0x3E7/FoodBridge](https://github.com/yash777-0x3E7/FoodBridge)
 
